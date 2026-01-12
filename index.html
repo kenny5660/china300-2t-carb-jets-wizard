@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подбор жиклеров - China 300 2T</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1;
+            white-space: nowrap;
+            width: 150%;
+            text-align: center;
+        }
+
+        .watermark-footer {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: 1;
+            text-align: right;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(100, 200, 255, 0.3);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #64c8ff;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            border: none;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: #64c8ff;
+        }
+
+        .tab-btn.active {
+            color: #64c8ff;
+            border-bottom-color: #64c8ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64c8ff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select, input[type="number"] {
+            padding: 12px 15px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #64c8ff;
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+        }
+
+        select option {
+            background: rgba(30, 30, 50, 0.95);
+            color: #fff;
+        }
+
+        select option:checked {
+            background: #64c8ff;
+            color: #1a1a2e;
+        }
+
+        .btn-calculate {
+            grid-column: 1 / -1;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #64c8ff 0%, #4a9dd9 100%);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(100, 200, 255, 0.3);
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(100, 200, 255, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results h2 {
+            font-size: 18px;
+            color: #64c8ff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #64c8ff;
+        }
+
+        .recommendation {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 3px solid #4caf50;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .warning {
+            background: rgba(255, 152, 0, 0.2);
+            border-left: 3px solid #ff9800;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ffb74d;
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .profiles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #64c8ff;
+            box-shadow: 0 8px 20px rgba(100, 200, 255, 0.2);
+        }
+
+        .profile-name {
+            font-weight: 700;
+            color: #64c8ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .profile-info {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .profile-info strong {
+            color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: rgba(100, 200, 255, 0.15);
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            color: #64c8ff;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: rgba(100, 200, 255, 0.05);
+        }
+
+        .text-small {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">@VYK307</div>
+    <div class="watermark-footer">
+        автор: @vyk307<br>
+        создано на основе опыта чата China300<br>
+        2024-2025
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>⚙️ Подбор жиклеров карбюратора</h1>
+            <p class="subtitle">China 300 2T / Hengjian / Kamax / GR8 / Koshine 320</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('calculator')">🔧 Калькулятор</button>
+            <button class="tab-btn" onclick="switchTab('profiles')">📋 Топ 10 Настроек</button>
+            <button class="tab-btn" onclick="switchTab('checklist')">✅ Подготовка</button>
+            <button class="tab-btn" onclick="switchTab('corrections')">🌡️ Коррекции</button>
+            <button class="tab-btn" onclick="switchTab('partnumbers')">🔧 Партномеры KTM</button>
+        </div>
+
+        <!-- Tab 1: Calculator -->
+        <div id="calculator" class="tab-content active">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Модель мотоцикла</label>
+                    <select id="motorcycle">
+                        <option value="">-- Выберите --</option>
+                        <option value="hengjian">Hengjian (Хенжан, Камакс, Лекстра, ГР8)</option>
+                        <option value="koshine">Koshine 320 (Кошайн)</option>
+                        <option value="miura">Miura</option>
+                        <option value="aj1">AJ1</option>
+                        <option value="nibbi">Nibbi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Тип карбюратора</label>
+                    <select id="carburetor">
+                        <option value="">-- Выберите --</option>
+                        <option value="keihin">Keihin PWK (Кейхин)</option>
+                        <option value="mikuni">Mikuni SZC (Микуни)</option>
+                        <option value="nibbi-pwk">Nibbi PWK</option>
+                        <option value="shxl">SHXL</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Диаметр диффузора</label>
+                    <select id="diffuser">
+                        <option value="">-- Выберите --</option>
+                        <option value="36">36 мм</option>
+                        <option value="38">38 мм</option>
+                        <option value="40">40 мм</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Температура окружающей среды</label>
+                    <select id="temperature">
+                        <option value="all">Без учета температуры</option>
+                        <option value="cold">Холодная (0-5°C)</option>
+                        <option value="cool">Прохладная (5-15°C)</option>
+                        <option value="warm">Теплая (15-25°C)</option>
+                        <option value="hot">Жаркая (25°C+)</option>
+                        <option value="wet">Влажная/Дождливая</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Высота над уровнем моря</label>
+                    <select id="altitude">
+                        <option value="all">Без учета высоты</option>
+                        <option value="0-300">0-300м (приморье)</option>
+                        <option value="300-600">300-600м</option>
+                        <option value="600-1000">600-1000м</option>
+                        <option value="1000+">1000м и выше</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Опциональные примечания</label>
+                    <input type="text" id="notes" placeholder="например: спортивное использование, модификации и т.д." />
+                </div>
+
+                <button class="btn-calculate" onclick="calculate()">Рассчитать подбор</button>
+            </div>
+
+            <div id="results" class="results">
+                <h2>📊 Результаты подбора</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="result-card">
+                        <div class="result-label">Главный жиклер (ГТЖ)</div>
+                        <div class="result-value" id="mainJet">--</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Жиклер холостого хода (ХХ)</div>
+                        <div class="result-value" id="idleJet">--</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Оригинальная игла</div>
+                        <div class="result-value" id="needleType" style="font-size: 16px;">--</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Позиция/Номер иглы</div>
+                        <div class="result-value" id="needlePos">--</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Диапазон ГТЖ</div>
+                        <div class="result-value" id="range" style="font-size: 18px;">--</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Источник данных</div>
+                        <div class="result-value" id="source" style="font-size: 13px;">--</div>
+                    </div>
+                </div>
+                <div id="recommendation" class="recommendation"></div>
+                <div id="warning" class="warning" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Top Profiles -->
+        <div id="profiles" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #64c8ff; font-size: 18px;">📌 Топ-10 проверенных конфигураций из чата China300</h2>
+            <div class="profiles-grid" id="profilesContainer">
+                <!-- Profiles will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Tab 3: Pre-Tuning Checklist -->
+        <div id="checklist" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #64c8ff; font-size: 18px;">✅ Чеклист подготовки перед настройкой карбюратора</h2>
+            <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">⚠️ Важно: Все должно быть исправно ПЕРЕД настройкой карбюратора</h3>
+                
+                <div style="display: grid; gap: 12px;">
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Лепестковый клапан</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Целый, без жутких просветов, нормальное состояние</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Воздушный фильтр</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Чистый, не сильно пропитанный, БЕЗ шапочки</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Свеча зажигания</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Рабочая (желательно новая, не прогоревшая)</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Катушка зажигания и свечной колпачок</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Исправная, без повреждений и трещин</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Топливная смесь</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Свежий микс 1:50 или 1:45 с 95 бензином (не старое масло!)</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Патрубки и манифолд</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Герметичны, без подсоса воздуха. Проверить от карба до мотора</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Компрессия мотора</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Исправная, мотор нормально работает, не клацает</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Карбюратор</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Полностью очищен, все промыто и продуто сжатым воздухом</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Поплавок</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Выставлен в соответствии с мануалом карбюратора</span>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <strong style="color: #64c8ff;">✔️ Герметичность</strong><br>
+                        <span style="color: #aaa; font-size: 12px;">Все прокладки в карбе и лепестковом клапане герметичны, подсос воздуха исключен</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(76, 175, 80, 0.2); border-left: 3px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <strong style="color: #4caf50;">⚡ Процесс настройки</strong><br>
+                <span style="color: #ddd; font-size: 13px; line-height: 1.6;">
+                    <strong>Все настройки проводятся на хорошо прогретом моторе!</strong><br>
+                    Прогревайте на ходу, так как на месте прогреть до конца невозможно. На холостом ходу/подставке можно только проверить работу ХХ, но не весь диапазон работы мотора.
+                </span>
+            </div>
+
+            <div style="background: rgba(255, 152, 0, 0.2); border-left: 3px solid #ff9800; padding: 15px; border-radius: 4px;">
+                <strong style="color: #ffb74d;">🔥 Анализ свечи зажигания</strong><br>
+                <span style="color: #ffb74d; font-size: 13px; line-height: 1.6;">
+                    Свечу смотрят только после полного прогона во всю «дыру» (максимальных оборотов), но НИКАК не на холостом ходу или около холостых оборотов! Только по цвету электрода на максимальных оборотах можно судить о правильности настройки ГТЖ.
+                </span>
+            </div>
+        </div>
+
+        <!-- Tab 4: Temperature & Altitude Corrections -->
+        <div id="corrections" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #64c8ff; font-size: 18px;">🌡️ Таблицы коррекций по условиям</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                <!-- Temperature Corrections -->
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">🌡️ Температурные коррекции</h3>
+                    <table>
+                        <tr style="background: rgba(100, 200, 255, 0.15);">
+                            <th>Условия</th>
+                            <th>Коррекция ГТЖ</th>
+                            <th>Коррекция ХХ</th>
+                            <th>Позиция иглы</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Холодная (0-5°C)</strong></td>
+                            <td style="color: #4caf50;">+3 до +5</td>
+                            <td style="color: #4caf50;">+2 до +3</td>
+                            <td style="color: #4caf50;">Позиция 4 (обогащение)</td>
+                        </tr>
+                        <tr style="background: rgba(100, 200, 255, 0.05);">
+                            <td><strong>Прохладная (5-15°C)</strong></td>
+                            <td style="color: #4caf50;">+1 до +3</td>
+                            <td style="color: #4caf50;">+1 до +2</td>
+                            <td style="color: #4caf50;">Позиция 3</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Теплая (15-25°C)</strong></td>
+                            <td style="color: #64c8ff;">Базовая</td>
+                            <td style="color: #64c8ff;">Базовая</td>
+                            <td style="color: #64c8ff;">Позиция 3</td>
+                        </tr>
+                        <tr style="background: rgba(100, 200, 255, 0.05);">
+                            <td><strong>Жаркая (25°C+)</strong></td>
+                            <td style="color: #ffb74d;">-2 до -3</td>
+                            <td style="color: #ffb74d;">-1</td>
+                            <td style="color: #ffb74d;">Позиция 2 (обеднение)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Влажная/Дождливая</strong></td>
+                            <td style="color: #4caf50;">+2 до +3</td>
+                            <td style="color: #4caf50;">+1 до +2</td>
+                            <td style="color: #4caf50;">Позиция 3-4</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Altitude Corrections -->
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">⛰️ Высотные коррекции</h3>
+                    <table>
+                        <tr style="background: rgba(100, 200, 255, 0.15);">
+                            <th>Высота</th>
+                            <th>Коррекция ГТЖ</th>
+                            <th>Коррекция ХХ</th>
+                            <th>Позиция иглы</th>
+                        </tr>
+                        <tr>
+                            <td><strong>0-300м (приморье)</strong></td>
+                            <td style="color: #64c8ff;">Базовая</td>
+                            <td style="color: #64c8ff;">Базовая</td>
+                            <td style="color: #64c8ff;">Позиция 3</td>
+                        </tr>
+                        <tr style="background: rgba(100, 200, 255, 0.05);">
+                            <td><strong>300-600м</strong></td>
+                            <td style="color: #4caf50;">+1 до +2</td>
+                            <td style="color: #4caf50;">+1</td>
+                            <td style="color: #4caf50;">Позиция 3</td>
+                        </tr>
+                        <tr>
+                            <td><strong>600-1000м (горы)</strong></td>
+                            <td style="color: #4caf50;">+3 до +5</td>
+                            <td style="color: #4caf50;">+1 до +2</td>
+                            <td style="color: #4caf50;">Позиция 4</td>
+                        </tr>
+                        <tr style="background: rgba(100, 200, 255, 0.05);">
+                            <td><strong>1000м+ (высокогорье)</strong></td>
+                            <td style="color: #ff9800;">+5 до +7</td>
+                            <td style="color: #ff9800;">+2 до +3</td>
+                            <td style="color: #ff9800;">Позиция 4-5</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Important Notes -->
+                <div style="background: rgba(76, 175, 80, 0.15); border-left: 3px solid #4caf50; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #4caf50;">💡 Как пользоваться таблицами коррекций</strong><br>
+                    <span style="color: #ddd; font-size: 13px; line-height: 1.6;">
+                        1. Найти в калькуляторе базовую настройку для вашего карбюратора<br>
+                        2. Применить коррекцию температуры к главному жиклеру (ГТЖ)<br>
+                        3. Применить коррекцию высоты к полученному значению<br>
+                        4. Убедиться, что результат находится в допустимом диапазоне для вашего карба<br>
+                        5. Позиция иглы корректируется отдельно в соответствии с условиями
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: OEM Part Numbers -->
+        <div id="partnumbers" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #64c8ff; font-size: 18px;">🔧 Оригинальные номера деталей KTM EXC 300 (2012-2016)</h2>
+            
+            <div style="background: rgba(255, 152, 0, 0.15); border-left: 3px solid #ff9800; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <strong style="color: #ffb74d;">ℹ️ Информация</strong><br>
+                <span style="color: #ddd; font-size: 13px; line-height: 1.6;">
+                    Маркировка карбюратора: <strong>BC5</strong> и <strong>FK</strong><br>
+                    Диапазон температур: <strong>-20°C до +49°C</strong><br>
+                    Последние 2 цифры номера = диаметр отверстия жиклера
+                </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                <!-- Main Jets -->
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">📌 Главный топливный жиклер (ГТЖ)</h3>
+                    <table>
+                        <tr style="background: rgba(100, 200, 255, 0.15);">
+                            <th>Размер</th>
+                            <th>Партномер KTM</th>
+                        </tr>
+                        <tr><td>158</td><td style="font-weight: 600; color: #64c8ff;">54531623158</td></tr>
+                        <tr><td>160</td><td style="font-weight: 600; color: #64c8ff;">54531623160</td></tr>
+                        <tr><td>162</td><td style="font-weight: 600; color: #64c8ff;">54531623162</td></tr>
+                        <tr><td>165</td><td style="font-weight: 600; color: #64c8ff;">54531623165</td></tr>
+                        <tr><td>168</td><td style="font-weight: 600; color: #64c8ff;">54531623168</td></tr>
+                        <tr><td>170</td><td style="font-weight: 600; color: #64c8ff;">54531623170</td></tr>
+                        <tr><td>172</td><td style="font-weight: 600; color: #64c8ff;">54531623172</td></tr>
+                        <tr><td>175</td><td style="font-weight: 600; color: #64c8ff;">54531623175</td></tr>
+                        <tr><td>178</td><td style="font-weight: 600; color: #64c8ff;">54531623178</td></tr>
+                        <tr><td>180</td><td style="font-weight: 600; color: #64c8ff;">54531623180</td></tr>
+                    </table>
+                </div>
+
+                <!-- Idle Jets -->
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">📌 Жиклер холостого хода (ХХ)</h3>
+                    <table>
+                        <tr style="background: rgba(100, 200, 255, 0.15);">
+                            <th>Размер</th>
+                            <th>Партномер KTM</th>
+                        </tr>
+                        <tr><td>35</td><td style="font-weight: 600; color: #64c8ff;">54531607035</td></tr>
+                        <tr><td>38</td><td style="font-weight: 600; color: #64c8ff;">54531607038</td></tr>
+                        <tr><td>40</td><td style="font-weight: 600; color: #64c8ff;">54531607040</td></tr>
+                    </table>
+                </div>
+
+                <!-- Needles -->
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">📌 Игла карбюратора KEIHIN</h3>
+                    <table>
+                        <tr style="background: rgba(100, 200, 255, 0.15);">
+                            <th>Маркировка иглы</th>
+                            <th>Партномер KTM</th>
+                        </tr>
+                        <tr><td>N2ZH</td><td style="font-weight: 600; color: #64c8ff;">54731134700</td></tr>
+                        <tr><td>N2ZW</td><td style="font-weight: 600; color: #64c8ff;">54731134100</td></tr>
+                        <tr><td>N2ZJ</td><td style="font-weight: 600; color: #64c8ff;">54731134200</td></tr>
+                        <tr><td>N2ZK</td><td style="font-weight: 600; color: #64c8ff;">54731134800</td></tr>
+                        <tr><td>N2ZL</td><td style="font-weight: 600; color: #64c8ff;">54731134900</td></tr>
+                        <tr><td>N8RF (2014-16г)</td><td style="font-weight: 600; color: #64c8ff;">54831035000</td></tr>
+                        <tr><td>N8RG (2014-16г)</td><td style="font-weight: 600; color: #64c8ff;">54831035100</td></tr>
+                        <tr><td>N8RH (2014-16г)</td><td style="font-weight: 600; color: #64c8ff;">54831035400</td></tr>
+                        <tr><td>N8RW (2014-16г)</td><td style="font-weight: 600; color: #64c8ff;">54831035500</td></tr>
+                    </table>
+                </div>
+
+                <!-- Clip -->
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #64c8ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">📌 Стопор иглы (BAR CLIP)</h3>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 6px; border-left: 3px solid #64c8ff;">
+                        <span style="color: #aaa; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Партномер:</span><br>
+                        <span style="font-size: 20px; font-weight: 700; color: #64c8ff;">59031029000</span>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div style="background: rgba(76, 175, 80, 0.15); border-left: 3px solid #4caf50; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #4caf50;">💡 Примечание</strong><br>
+                    <span style="color: #ddd; font-size: 13px; line-height: 1.6;">
+                        Оригинальные номера начинаются с <strong>54</strong>...<br>
+                        Для поиска деталей: можно искать по названию маркировки иглы (например: N8RG, N2ZW)<br>
+                        Все эти номера совместимы с китайскими аналогами (Hengjian, Kamax, GR8, Koshine и т.д.)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const presetProfiles = [
+            {
+                name: "Hengjian + Keihin PWK 38 (Теплая, приморье) KTM data",
+                motorcycle: "Hengjian",
+                carburetor: "Keihin PWK 38",
+                diffuser: "38mm",
+                mainJet: "170-175",
+                idleJet: "35-38",
+                needlePos: "N8R G (3 из 5)",
+                temp: "Теплая (15-25°C)",
+                altitude: "0-300м",
+                notes: "На основе KTM Service Manual EXC 300, проверено на Hengjian (аналог KTM)"
+            },
+            {
+                name: "Hengjian + Mikuni SZC 38 (Холодная, горы)",
+                motorcycle: "Hengjian",
+                carburetor: "Mikuni SZC 38",
+                diffuser: "38mm",
+                mainJet: "172-175",
+                idleJet: "38-40",
+                needlePos: "N2ZW (4-5 из 5)",
+                temp: "Холодная (0-5°C)",
+                altitude: "600-1000м",
+                notes: "Обогащено для холода/высоты. На гору добавить 2-3 ГТЖ. Игла N2ZJ для 600-1000м"
+            },
+            {
+                name: "Hengjian + Nibbi PWK 36 (Средние условия)",
+                motorcycle: "Hengjian",
+                carburetor: "Nibbi PWK",
+                diffuser: "36mm",
+                mainJet: "170-172",
+                idleJet: "35-38",
+                needlePos: "N8R G (3 из 5)",
+                temp: "Прохладная (5-15°C)",
+                altitude: "300-600м",
+                notes: "Аналог Keihin. Универсальная настройка для смешанного использования"
+            },
+            {
+                name: "Hengjian + Keihin 36 (Жаркая, приморье) KTM manual",
+                motorcycle: "Hengjian",
+                carburetor: "Keihin PWK 36",
+                diffuser: "36mm",
+                mainJet: "168-172",
+                idleJet: "35-37",
+                needlePos: "N8R G (3 из 5)",
+                temp: "Жаркая (25°C+)",
+                altitude: "0-300м",
+                notes: "На основе KTM Service Manual. Обеднено для жарких условий"
+            },
+            {
+                name: "Koshine 320 + Mikuni SZC 40 (Макс мощь, спорт)",
+                motorcycle: "Koshine",
+                carburetor: "Mikuni SZC 40",
+                diffuser: "40mm",
+                mainJet: "172-175",
+                idleJet: "38-40",
+                needlePos: "N2ZW/N2ZH (4-5 из 5)",
+                temp: "Теплая (15-25°C)",
+                altitude: "300-600м",
+                notes: "Максимальная производительность. N2ZH для низкотемпературных условий"
+            },
+            {
+                name: "AJ1 + XTNG 36 (Эндуро, горы)",
+                motorcycle: "AJ1",
+                carburetor: "XTNG Gen 3",
+                diffuser: "36mm",
+                mainJet: "170-175",
+                idleJet: "35-38",
+                needlePos: "Position 3-4",
+                temp: "Прохладная (5-15°C)",
+                altitude: "600-1000м",
+                notes: "Проверено на горных маршрутах. Добавить 3-5 ГТЖ при высоте свыше 700м"
+            },
+            {
+                name: "Hengjian + Mikuni SZC 38 (Влажная, лес)",
+                motorcycle: "Hengjian",
+                carburetor: "Mikuni SZC 38",
+                diffuser: "38mm",
+                mainJet: "171-175",
+                idleJet: "38-40",
+                needlePos: "N2ZW (4 из 5)",
+                temp: "Влажная/Дождливая",
+                altitude: "300-600м",
+                notes: "Слегка обогащена для влажных условий. N2ZJ для режима постоянного использования"
+            },
+            {
+                name: "Miura + Nibbi PWK 38 (Универсал)",
+                motorcycle: "Miura",
+                carburetor: "Nibbi PWK",
+                diffuser: "38mm",
+                mainJet: "170-175",
+                idleJet: "35-40",
+                needlePos: "N8R G (3 из 5)",
+                temp: "Теплая (15-25°C)",
+                altitude: "300-600м",
+                notes: "Аналог Keihin. Хороший баланс производительности и тяги на средних оборотах"
+            },
+            {
+                name: "Nibbi + Keihin 40 (Максимум мощи, плоская местность)",
+                motorcycle: "Nibbi",
+                carburetor: "Keihin PWK 40",
+                diffuser: "40mm",
+                mainJet: "172-180",
+                idleJet: "38-40",
+                needlePos: "N8R F (4 из 5)",
+                temp: "Теплая (15-25°C)",
+                altitude: "0-300м",
+                notes: "На основе KTM данных. Максимальная производительность для спорта"
+            },
+            {
+                name: "Hengjian + Mikuni SZC 36 (Базовая, универсал)",
+                motorcycle: "Hengjian",
+                carburetor: "Mikuni SZC 36",
+                diffuser: "36mm",
+                mainJet: "170-172",
+                idleJet: "35-40",
+                needlePos: "N2ZJ (3 из 5)",
+                temp: "Теплая (15-25°C)",
+                altitude: "0-300м",
+                notes: "Отличный старт для новичков. Хорошо отзывается на открытие дроссельной заслонки"
+            }
+        ];
+
+        const jetRecommendations = {
+            "keihin-36": { main: [165, 180], idle: [35, 38], needle: "N8R G/F", source: "KTM Service Manual EXC 300" },
+            "keihin-38": { main: [165, 180], idle: [35, 40], needle: "N8R F/G", source: "KTM Service Manual EXC 300" },
+            "keihin-40": { main: [168, 180], idle: [38, 40], needle: "N8R F/G", source: "KTM Service Manual EXC 300" },
+            "mikuni-36": { main: [165, 175], idle: [35, 40], needle: "N2ZK/N2ZJ", source: "Chat recommendations + KTM data" },
+            "mikuni-38": { main: [168, 175], idle: [35, 40], needle: "N2ZW/N2ZJ", source: "Chat recommendations + KTM data" },
+            "mikuni-40": { main: [165, 175], idle: [35, 40], needle: "N2ZH/N2ZW", source: "Chat recommendations + KTM data" },
+            "nibbi-36": { main: [165, 180], idle: [35, 38], needle: "N8R G/F", source: "Аналог Keihin PWK (KTM Service Manual)" },
+            "nibbi-38": { main: [165, 180], idle: [35, 40], needle: "N8R F/G", source: "Аналог Keihin PWK (KTM Service Manual)" },
+            "nibbi-40": { main: [168, 180], idle: [38, 40], needle: "N8R F/G", source: "Аналог Keihin PWK (KTM Service Manual)" },
+            "shxl-36": { main: [165, 175], idle: [35, 38], needle: "N8R G/F", source: "Аналог Keihin PWK (KTM Service Manual)" },
+            "shxl-38": { main: [165, 180], idle: [35, 40], needle: "N8R F/G", source: "Аналог Keihin PWK (KTM Service Manual)" }
+        };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'profiles') {
+                loadProfiles();
+            }
+        }
+
+        function calculate() {
+            const motorcycle = document.getElementById('motorcycle').value;
+            const carburetor = document.getElementById('carburetor').value;
+            const diffuser = document.getElementById('diffuser').value;
+            const temperature = document.getElementById('temperature').value;
+            const altitude = document.getElementById('altitude').value;
+
+            if (!motorcycle || !carburetor || !diffuser) {
+                alert('Заполните все основные параметры!');
+                return;
+            }
+
+            let baseKey = carburetor + '-' + diffuser;
+            let recommendation = jetRecommendations[baseKey];
+
+            if (!recommendation) {
+                alert('Нет точных данных для ' + carburetor + ' ' + diffuser + 'мм на ' + motorcycle + '. Используются данные от аналогичных карбюраторов системы Keihin.');
+                if (carburetor.includes('shxl') || carburetor.includes('nibbi')) {
+                    baseKey = 'keihin-' + diffuser;
+                    recommendation = jetRecommendations[baseKey];
+                } else {
+                    return;
+                }
+            }
+
+            let mainJet = recommendation.main[0];
+            let idleJet = recommendation.idle[0];
+            let needlePos = 3;
+
+            // Temperature adjustments - только предложение в диапазоне
+            if (temperature === 'cold') {
+                mainJet = Math.min(recommendation.main[1], mainJet + 5);
+                idleJet = Math.min(recommendation.idle[1], idleJet + 3);
+                needlePos = 4;
+            } else if (temperature === 'cool') {
+                mainJet = Math.min(recommendation.main[1], mainJet + 2);
+                idleJet = Math.min(recommendation.idle[1], idleJet + 1);
+                needlePos = 3;
+            } else if (temperature === 'hot') {
+                mainJet = Math.max(recommendation.main[0], mainJet - 3);
+                idleJet = Math.max(recommendation.idle[0], idleJet - 1);
+                needlePos = 2;
+            } else if (temperature === 'wet') {
+                mainJet = Math.min(recommendation.main[1], mainJet + 3);
+                idleJet = Math.min(recommendation.idle[1], idleJet + 2);
+                needlePos = 3;
+            }
+
+            // Altitude adjustments - только в пределах диапазона
+            if (altitude === '1000+') {
+                mainJet = Math.min(recommendation.main[1], mainJet + 5);
+                idleJet = Math.min(recommendation.idle[1], idleJet + 2);
+                needlePos = 4;
+            } else if (altitude === '600-1000') {
+                mainJet = Math.min(recommendation.main[1], mainJet + 3);
+                idleJet = Math.min(recommendation.idle[1], idleJet + 1);
+            } else if (altitude === '300-600') {
+                mainJet = Math.min(recommendation.main[1], mainJet + 1);
+                idleJet = Math.min(recommendation.idle[1], idleJet + 1);
+            }
+
+            // Ensure within safe ranges provided by recommendation
+            mainJet = Math.max(recommendation.main[0], Math.min(recommendation.main[1], mainJet));
+            idleJet = Math.max(recommendation.idle[0], Math.min(recommendation.idle[1], idleJet));
+            needlePos = Math.max(1, Math.min(5, needlePos));
+
+            // Display results
+            document.getElementById('mainJet').textContent = mainJet;
+            document.getElementById('idleJet').textContent = idleJet;
+            document.getElementById('needleType').textContent = recommendation.needle || '--';
+            document.getElementById('needlePos').textContent = needlePos + ' из 5';
+            document.getElementById('range').textContent = `${recommendation.main[0]}...${recommendation.main[1]}`;
+            document.getElementById('source').textContent = recommendation.source || 'Chat data';
+
+            let recommendationText = `<strong>Подходит для:</strong> ${motorcycle} с ${carburetor} ${diffuser}мм<br>`;
+            recommendationText += `<strong>Условия:</strong> ${getConditionText(temperature, altitude)}<br>`;
+            recommendationText += `<strong>Игла:</strong> ${recommendation.needle} (позиция ${needlePos} из 5)<br>`;
+            recommendationText += `<strong>Диапазон ГТЖ/ХХ:</strong> ${recommendation.main[0]}-${recommendation.main[1]} / ${recommendation.idle[0]}-${recommendation.idle[1]}<br>`;
+            if (recommendation.source === 'KTM Service Manual') {
+                recommendationText += `<strong>Источник:</strong> KTM Service Manual для KTM 300 EXC<br>`;
+            }
+            recommendationText += `<strong>Совет:</strong> начните с рекомендуемого значения и делайте поездку на 10-15 км. Если мотор жесткий/грубый, уменьшите ГТЖ на 2-3. Если теряет мощность, увеличьте на 2-3.`;
+
+            document.getElementById('recommendation').innerHTML = recommendationText;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function getConditionText(temp, alt) {
+            const tempMap = {
+                'cold': 'Холодная (0-5°C)',
+                'cool': 'Прохладная (5-15°C)',
+                'warm': 'Теплая (15-25°C)',
+                'hot': 'Жаркая (25°C+)',
+                'wet': 'Влажная/Дождливая',
+                'all': 'Стандартные'
+            };
+            const altMap = {
+                '0-300': 'приморье (0-300м)',
+                '300-600': 'холмы (300-600м)',
+                '600-1000': 'горы (600-1000м)',
+                '1000+': 'высокогорье (1000м+)',
+                'all': 'на любой высоте'
+            };
+            return (tempMap[temp] || 'Стандартные') + ' на ' + (altMap[alt] || 'любой высоте');
+        }
+
+        function loadProfiles() {
+            const container = document.getElementById('profilesContainer');
+            container.innerHTML = '';
+            presetProfiles.forEach(profile => {
+                const card = document.createElement('div');
+                card.className = 'profile-card';
+                card.innerHTML = `
+                    <div class="profile-name">${profile.name}</div>
+                    <div class="profile-info">
+                        <strong>Мото:</strong> ${profile.motorcycle}<br>
+                        <strong>Карб:</strong> ${profile.carburetor}<br>
+                        <strong>ГТЖ/ХХ:</strong> ${profile.mainJet}/${profile.idleJet}<br>
+                        <strong>Игла:</strong> ${profile.needlePos}<br>
+                        <strong>Усл:</strong> ${profile.temp}, ${profile.altitude}<br>
+                        <strong>Примечание:</strong> ${profile.notes}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Load profiles on page load
+        window.addEventListener('load', () => {
+            loadProfiles();
+        });
+    </script>
+</body>
+</html>
